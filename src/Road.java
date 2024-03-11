@@ -1,9 +1,9 @@
 public class Road {
   private City pointA;
   private City pointB;
-  private Double distance;
+  private double distance;
 
-  public Road(int id, City pointA, City pointB, Double distance) {
+  public Road(int id, City pointA, City pointB, double distance) {
     this.pointA = pointA;
     this.pointB = pointB;
     this.distance = distance;
@@ -17,7 +17,7 @@ public class Road {
     return pointB;
   }
 
-  public Double getDistance() {
+  public double getDistance() {
     return distance;
   }
 }
