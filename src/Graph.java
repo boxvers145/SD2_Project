@@ -14,7 +14,7 @@ public class Graph {
   }
 
   //  Read cities.txt and populate the cities Map
-  private void parseCities(File citiesFile) {
+  private Map<String, City> parseCities(File citiesFile) {
       Scanner scanner = null;
       try {
           scanner = new Scanner(citiesFile);
@@ -30,10 +30,11 @@ public class Graph {
       cities.put(name, new City(id, name, latitude, longitude));
     }
     scanner.close();
+      return cities;
   }
 
   //  Read roads.txt and populate the routes Map
-  private void parseRoads(File roadsFile) {
+  private Map<Integer, Road> parseRoads(File roadsFile) {
       Scanner scanner = null;
       try {
           scanner = new Scanner(roadsFile);
@@ -60,6 +61,19 @@ public class Graph {
       }
     }
     scanner.close();
+      return routes;
+  }
+
+  public void showAll(File theVille, File TheRoute){
+    cities = parseCities(theVille);
+    routes = parseRoads(TheRoute);
+    for (City ville : cities.values()) {
+      System.out.println("id : " + ville.getId() + " nom : " + ville.getName());
+    }
+    System.out.println("_______________________________________________________________");
+    for (Road route : routes.values()) {
+      System.out.println("ville de départ : " + route.getPointA().getName() + " ville d'arrivé : " + route.getPointB().getName());
+    }
   }
 
   // Implementation of calculateItineraryMinimizingNumberOfRoutes (BFS)
