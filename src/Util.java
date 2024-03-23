@@ -14,8 +14,6 @@ public class Util {
 
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
-        double distance = earthRadius * c;
-
-        return distance;
+        return earthRadius * c;
     }
 }

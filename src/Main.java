@@ -8,7 +8,6 @@ public class Main {
 		graph.calculerItineraireMinimisantNombreRoutes("Berlin", "Madrid");
 		System.out.println("--------------------------");
 		graph.calculerItineraireMinimisantKm("Berlin", "Madrid");
-		graph.showAll(cities, roads);
 	}
 
 }
