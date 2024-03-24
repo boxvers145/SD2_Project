@@ -6,6 +6,9 @@ public class Graph {
     private final Map<String, City> cities;
     private final Map<Integer, Road> routes;
 
+    public record City(int id, String name, double longitude, double latitude) { }
+    public record Road(City pointA, City pointB, double distance) { }
+
     public Graph(File citiesFile, File roadsFile) {
         cities = new HashMap<>();
         routes = new HashMap<>();
@@ -46,17 +49,17 @@ public class Graph {
             int id2 = Integer.parseInt(parts[1]);
 
             City city1 = cities.values().stream()
-                    .filter(city -> city.getId() == id1)
+                    .filter(city -> city.id() == id1)
                     .findFirst().orElse(null);
             City city2 = cities.values().stream()
-                    .filter(city -> city.getId() == id2)
+                    .filter(city -> city.id() == id2)
                     .findFirst().orElse(null);
 
             if (city1 != null && city2 != null) {
-                double distance = Util.distance(city1.getLatitude(), city1.getLongitude(),
-                        city2.getLatitude(), city2.getLongitude());
-                routes.put(city1.getId() * 1000 + city2.getId(), new Road(city1, city2, distance));
-                routes.put(city2.getId() * 1000 + city1.getId(), new Road(city2, city1, distance));
+                double distance = Util.distance(city1.latitude(), city1.longitude(),
+                        city2.latitude(), city2.longitude());
+                routes.put(city1.id() * 1000 + city2.id(), new Road(city1, city2, distance));
+                routes.put(city2.id() * 1000 + city1.id(), new Road(city2, city1, distance));
             }
         }
         scanner.close();
@@ -71,21 +74,21 @@ public class Graph {
             path.add(0, currentCity);
             City previousCity = visited.get(currentCity);
             if (previousCity != null) {
-                totalDistance += Util.distance(previousCity.getLatitude(), previousCity.getLongitude(),
-                        currentCity.getLatitude(), currentCity.getLongitude());
+                totalDistance += Util.distance(previousCity.latitude(), previousCity.longitude(),
+                        currentCity.latitude(), currentCity.longitude());
             }
             currentCity = previousCity;
         }
 
         assert endCity != null;
-        System.out.println("Trajet de " + startCity.getName() + " à " + endCity.getName() + " : " + (path.size() - 1) + " routes et " + totalDistance + " km"); //
+        System.out.println("Trajet de " + startCity.name() + " à " + endCity.name() + " : " + (path.size() - 1) + " routes et " + totalDistance + " km"); //
 
         for (int i = 0; i < path.size() - 1; i++) {
             City cityA = path.get(i);
             City cityB = path.get(i + 1);
-            double distanceAB = Util.distance(cityA.getLatitude(), cityA.getLongitude(),
-                    cityB.getLatitude(), cityB.getLongitude());
-            System.out.println(cityA.getName() + " -> " + cityB.getName() + " (" + distanceAB + " km)");
+            double distanceAB = Util.distance(cityA.latitude(), cityA.longitude(),
+                    cityB.latitude(), cityB.longitude());
+            System.out.println(cityA.name() + " -> " + cityB.name() + " (" + distanceAB + " km)");
         }
     }
 
@@ -114,14 +117,14 @@ public class Graph {
 
             // Iterate over roads connected to the current city
             for (Road road : routes.values()) {
-                if (road.getPointA().equals(currentCity)) {
-                    City neighbor = road.getPointB();
+                if (road.pointA().equals(currentCity)) {
+                    City neighbor = road.pointB();
                     if (!visited.containsKey(neighbor)) {
                         queue.add(neighbor);
                         visited.put(neighbor, currentCity);
                     }
-                } else if (road.getPointB().equals(currentCity)) { // Check for roads in either direction
-                    City neighbor = road.getPointA();
+                } else if (road.pointB().equals(currentCity)) { // Check for roads in either direction
+                    City neighbor = road.pointA();
                     if (!visited.containsKey(neighbor)) {
                         queue.add(neighbor);
                         visited.put(neighbor, currentCity);
@@ -166,15 +169,15 @@ public class Graph {
             // Iterate over neighbors of the current city
             for (Road road : routes.values()) {
                 City neighbor;
-                if (road.getPointA().equals(currentCity)) {
-                    neighbor = road.getPointB();
-                } else if (road.getPointB().equals(currentCity)) {
-                    neighbor = road.getPointA();
+                if (road.pointA().equals(currentCity)) {
+                    neighbor = road.pointB();
+                } else if (road.pointB().equals(currentCity)) {
+                    neighbor = road.pointA();
                 } else {
                     continue; // Road not connected to the current city
                 }
 
-                double tentativeDistance = distances.get(currentCity) + road.getDistance();
+                double tentativeDistance = distances.get(currentCity) + road.distance();
                 if (tentativeDistance < distances.get(neighbor)) {
                     distances.put(neighbor, tentativeDistance);
                     previous.put(neighbor, currentCity);
