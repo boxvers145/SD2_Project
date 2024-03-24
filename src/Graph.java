@@ -64,6 +64,32 @@ public class Graph {
         return routes;
     }
 
+    private void reconstructPath(Map<City, City> visited, City startCity, City endCity) {
+        List<City> path = new ArrayList<>();
+        City currentCity = endCity;
+        double totalDistance = 0;
+
+        while (currentCity != null) {
+            path.add(0, currentCity);
+            City previousCity = visited.get(currentCity);
+            if (previousCity != null) {
+                totalDistance += Util.distance(previousCity.getLatitude(), previousCity.getLongitude(),
+                        currentCity.getLatitude(), currentCity.getLongitude());
+            }
+            currentCity = previousCity;
+        }
+
+        System.out.println("Trajet de " + startCity.getName() + " à " + endCity.getName() + " : " + (path.size() - 1) + " routes et " + totalDistance + " km"); //
+
+        for (int i = 0; i < path.size() - 1; i++) {
+            City cityA = path.get(i);
+            City cityB = path.get(i + 1);
+            double distanceAB = Util.distance(cityA.getLatitude(), cityA.getLongitude(),
+                    cityB.getLatitude(), cityB.getLongitude());
+            System.out.println(cityA.getName() + " -> " + cityB.getName() + " (" + distanceAB + " km)");
+        }
+    }
+
     public void calculerItineraireMinimisantNombreRoutes(String startCityName, String endCityName) {
         City startCity = cities.get(startCityName);
         City endCity = cities.get(endCityName);
@@ -108,32 +134,6 @@ public class Graph {
         System.out.println("No route found between " + startCityName + " and " + endCityName);
     }
 
-    private void reconstructPath(Map<City, City> visited, City startCity, City endCity) {
-        List<City> path = new ArrayList<>();
-        City currentCity = endCity;
-        double totalDistance = 0;
-
-        while (currentCity != null) {
-            path.add(0, currentCity);
-            City previousCity = visited.get(currentCity);
-            if (previousCity != null) {
-                totalDistance += Util.distance(previousCity.getLatitude(), previousCity.getLongitude(),
-                        currentCity.getLatitude(), currentCity.getLongitude());
-            }
-            currentCity = previousCity;
-        }
-
-        System.out.println("Trajet de " + startCity.getName() + " à " + endCity.getName() + " : " + (path.size() - 1) + " routes et " + totalDistance + " km"); // -1 for the start city
-
-        for (int i = 0; i < path.size() - 1; i++) {
-            City cityA = path.get(i);
-            City cityB = path.get(i + 1);
-            double distanceAB = Util.distance(cityA.getLatitude(), cityA.getLongitude(),
-                    cityB.getLatitude(), cityB.getLongitude());
-            System.out.println(cityA.getName() + " -> " + cityB.getName() + " (" + distanceAB + " km)");
-        }
-    }
-
     // Implementation of calculateItineraryMinimizingDistance (Dijkstra's)
     public void calculerItineraireMinimisantKm(String startCityName, String endCityName) {
         City startCity = cities.get(startCityName);
@@ -157,7 +157,7 @@ public class Graph {
 
         // Main Dijkstra Loop
         while (!unvisited.isEmpty()) {
-            City currentCity = unvisited.poll(); // City with smallest known distance
+            City currentCity = unvisited.poll(); // City with the smallest known distance
 
             if (currentCity.equals(endCity)) {
                 reconstructPath(previous, startCity, endCity); // We found the destination
@@ -184,10 +184,6 @@ public class Graph {
             }
         }
 
-        // No path found
         System.out.println("No route found between " + startCityName + " and " + endCityName);
     }
 }
-
-
-// City and Route classes (similar to the previous example)
