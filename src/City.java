@@ -1,8 +1,8 @@
 public class City {
-  private int id;
-  private String name;
-  private double longitude;
-  private double latitude;
+  private final int id;
+  private final String name;
+  private final double longitude;
+  private final double latitude;
 
   public City(int id, String name, double longitude, double latitude) {
     this.id = id;

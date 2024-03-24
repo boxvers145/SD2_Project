@@ -1,9 +1,9 @@
 public class Road {
-  private City pointA;
-  private City pointB;
-  private double distance;
+  private final City pointA;
+  private final City pointB;
+  private final double distance;
 
-  public Road(int id, City pointA, City pointB, double distance) {
+  public Road(City pointA, City pointB, double distance) {
     this.pointA = pointA;
     this.pointB = pointB;
     this.distance = distance;

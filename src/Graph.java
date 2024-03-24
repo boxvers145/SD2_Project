@@ -3,8 +3,8 @@ import java.io.FileNotFoundException;
 import java.util.*;
 
 public class Graph {
-    private Map<String, City> cities;
-    private Map<Integer, Road> routes;
+    private final Map<String, City> cities;
+    private final Map<Integer, Road> routes;
 
     public Graph(File citiesFile, File roadsFile) {
         cities = new HashMap<>();
@@ -14,8 +14,8 @@ public class Graph {
     }
 
     //  Read cities.txt and populate the cities Map
-    private Map<String, City> parseCities(File citiesFile) {
-        Scanner scanner = null;
+    private void parseCities(File citiesFile) {
+        Scanner scanner;
         try {
             scanner = new Scanner(citiesFile);
         } catch (FileNotFoundException e) {
@@ -30,12 +30,11 @@ public class Graph {
             cities.put(name, new City(id, name, latitude, longitude));
         }
         scanner.close();
-        return cities;
     }
 
     //  Read roads.txt and populate the routes Map
-    private Map<Integer, Road> parseRoads(File roadsFile) {
-        Scanner scanner = null;
+    private void parseRoads(File roadsFile) {
+        Scanner scanner;
         try {
             scanner = new Scanner(roadsFile);
         } catch (FileNotFoundException e) {
@@ -56,12 +55,11 @@ public class Graph {
             if (city1 != null && city2 != null) {
                 double distance = Util.distance(city1.getLatitude(), city1.getLongitude(),
                         city2.getLatitude(), city2.getLongitude());
-                routes.put(city1.getId() * 1000 + city2.getId(), new Road(0, city1, city2, distance));
-                routes.put(city2.getId() * 1000 + city1.getId(), new Road(0, city2, city1, distance));
+                routes.put(city1.getId() * 1000 + city2.getId(), new Road(city1, city2, distance));
+                routes.put(city2.getId() * 1000 + city1.getId(), new Road(city2, city1, distance));
             }
         }
         scanner.close();
-        return routes;
     }
 
     private void reconstructPath(Map<City, City> visited, City startCity, City endCity) {
@@ -79,6 +77,7 @@ public class Graph {
             currentCity = previousCity;
         }
 
+        assert endCity != null;
         System.out.println("Trajet de " + startCity.getName() + " à " + endCity.getName() + " : " + (path.size() - 1) + " routes et " + totalDistance + " km"); //
 
         for (int i = 0; i < path.size() - 1; i++) {
